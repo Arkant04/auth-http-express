@@ -2,6 +2,8 @@ const express = require('express');
 const { getUser } = require('./database');
 const crypto = require('crypto');
 const app = express();
+const figlet = require("figlet")
+app.use(express.static("public"))
 
 const realm = 'User Visible Realm';
 
@@ -43,8 +45,13 @@ app.get('/protected', authMiddleware, (req, res) => {
   res.send(`Bienvenido ${username}, has accedido a una ruta protegida.`);
 });
 
+app.get('/mensajeUsuarioLog',authMiddleware ,(req, res) => {
+
+  res.send("Hola")
+})
+
 app.get('/logout', (req, res) => {
-  //res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
+  res.setHeader('WWW-Authenticate', `Basic realm="${realm}"`);
   res.status(401).send('Has sido deslogueado');
 });
 
@@ -52,6 +59,42 @@ app.get('/logout', (req, res) => {
 app.get('/', (req, res) => {
   res.sendFile(__dirname + '/public/index.html');
 });
+
+app.get("/fonts", (req, res) =>{
+  figlet.fonts(function (err, fonts) {
+      if (err) {
+        console.log("something went wrong...");
+        console.dir(err);
+        return;
+      }
+      res.send(fonts);
+    });
+})
+
+app.get("/figlet",authMiddleware , (req, res) =>{
+  const text = req.query.text
+  const font = req.query.font
+  
+  figlet.text(
+      `${text}`,
+      {
+        font: `${font}`,
+        horizontalLayout: "default",
+        verticalLayout: "default",
+        width: 80,
+        whitespaceBreak: true,
+      },
+      function (err, data) {
+        if (err) {
+          console.log("Something went wrong...");
+          console.dir(err);
+          return;
+        }
+        res.send(`<pre>${data}</pre>`);
+      }
+    );
+
+})
 
 // Iniciar el servidor
 app.listen(3000, () => {

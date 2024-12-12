@@ -9,7 +9,7 @@ db.exec("INSERT INTO users (user, password) VALUES ('admin', '81dc9bdb52d04dc200
 */
 let db_aux = null;
 if(!fs.existsSync('database.db')){
-    db_aux = new Database(':memory:');
+    db_aux = new Database('dataBase.db');
     db_aux.exec("CREATE TABLE users (user TEXT PRIMARY KEY, password TEXT)");
     db_aux.exec("INSERT INTO users (user, password) VALUES ('admin', '81dc9bdb52d04dc20036dbd8313ed055')");
     db_aux.exec("INSERT INTO users (user, password) VALUES ('pikachu', '04dac8afe0ca501587bad66f6b5ce5ad')");
